@@ -10,7 +10,7 @@ export class Correo {
   constructor(
     public readonly asunto: string,
     public readonly contenido: string,
-    public readonly remitente: Contacto,
+    public readonly remitente: Contacto | null,
     destinatarios: Contacto[]
   ) {
     this._destinatarios = [...destinatarios];
@@ -26,5 +26,20 @@ export class Correo {
 
   get destinatarios(): Contacto[] {
     return [...this._destinatarios];
+  }
+
+  validarParaEnvio(): void {
+    this.remitente !== null ||
+      this.rechazarEnvio("El remitente es obligatorio");
+
+    this.asunto.trim().length > 0 ||
+      this.rechazarEnvio("El asunto es obligatorio");
+
+    this._destinatarios.length > 0 ||
+      this.rechazarEnvio("Se requiere al menos un destinatario");
+  }
+
+  private rechazarEnvio(mensaje: string): never {
+    throw new Error(mensaje);
   }
 }
