@@ -8,4 +8,8 @@ describe("Contacto", () => {
     expect(contacto.nombre).toBe("Ana");
     expect(contacto.email).toBe("ana@ucp.edu.ar");
   });
+
+  test("rechaza un email con formato inválido", () => {
+  expect(() => new Contacto("Ana", "ana.ucp.edu.ar")).toThrow(/email/i);
+  });
 });
