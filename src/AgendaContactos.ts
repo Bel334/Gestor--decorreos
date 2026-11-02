@@ -4,6 +4,9 @@ export class AgendaContactos {
   private _contactos = new Map<string, Contacto>();
 
   agregar(contacto: Contacto): void {
+    if (this.consultar(contacto.email)) {
+      throw new Error("Ya existe un contacto con ese email");
+    }
     this._contactos.set(this.clave(contacto.email), contacto);
   }
 
