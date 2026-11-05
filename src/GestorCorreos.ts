@@ -1,6 +1,7 @@
 import { Correo } from "./Correo";
+import { buscarCorreos } from "./buscarCorreos";
 
-type Bandeja = "borradores" | "enviados";
+type Bandeja = "entrada" | "borradores" | "enviados";
 
 interface RegistroCorreo {
   correo: Correo;
@@ -13,9 +14,9 @@ export class GestorCorreos {
   guardarBorrador(correo: Correo): void {
     const registro = this._registros.get(correo.id);
 
-    registro?.bandeja !== "enviados" ||
+    (registro === undefined || registro.bandeja === "borradores") ||
       this.rechazarMovimiento(
-        "Un correo enviado no puede volver a Borradores"
+        "Solo se pueden guardar correos nuevos o borradores existentes"
       );
 
     this._registros.set(correo.id, {
@@ -25,6 +26,13 @@ export class GestorCorreos {
   }
 
   enviar(correo: Correo): void {
+    const registro = this._registros.get(correo.id);
+
+    registro?.bandeja !== "entrada" ||
+      this.rechazarMovimiento(
+        "Un correo recibido no puede enviarse como propio"
+      );
+
     correo.validarParaEnvio();
 
     this._registros.set(correo.id, {
@@ -33,12 +41,36 @@ export class GestorCorreos {
     });
   }
 
+  recibir(correo: Correo): void {
+    const registro = this._registros.get(correo.id);
+
+    (registro === undefined || registro.bandeja === "entrada") ||
+      this.rechazarMovimiento(
+        "El correo ya pertenece a otra bandeja"
+      );
+
+    correo.validarParaEnvio();
+
+    this._registros.set(correo.id, {
+      correo,
+      bandeja: "entrada"
+    });
+  }
+
+  get entrada(): Correo[] {
+    return this.obtenerCorreos("entrada");
+  }
+
   get enviados(): Correo[] {
     return this.obtenerCorreos("enviados");
   }
 
   get borradores(): Correo[] {
     return this.obtenerCorreos("borradores");
+  }
+
+  buscarEnEntrada(texto: string): Correo[] {
+    return buscarCorreos(this.entrada, texto);
   }
 
   private obtenerCorreos(bandeja: Bandeja): Correo[] {
