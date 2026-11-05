@@ -110,4 +110,63 @@ describe("Búsqueda de correos", () => {
 
     expect(resultado).toEqual([]);
   });
+
+  test("busca por el nombre de un destinatario que no es el primero", () => {
+    const ana = new Contacto("Ana", "ana@ucp.edu.ar");
+    const luis = new Contacto("Luis", "luis@ucp.edu.ar");
+    const lucia = new Contacto(
+      "Lucía Pérez",
+      "lucia.perez@ucp.edu.ar"
+    );
+
+    const correo = new Correo(
+      "Aviso",
+      "Hay clase",
+      ana,
+      [luis, lucia]
+    );
+
+    const resultado = buscarCorreos([correo], "péRE");
+
+    expect(resultado).toEqual([correo]);
+  });
+
+  test("busca por el email de un destinatario que no es el primero", () => {
+    const ana = new Contacto("Ana", "ana@ucp.edu.ar");
+    const luis = new Contacto("Luis", "luis@ucp.edu.ar");
+    const lucia = new Contacto(
+      "Lucía Pérez",
+      "lucia.perez@ucp.edu.ar"
+    );
+
+    const correo = new Correo(
+      "Aviso",
+      "Hay clase",
+      ana,
+      [luis, lucia]
+    );
+
+    const resultado = buscarCorreos([correo], "PEREZ@");
+
+    expect(resultado).toEqual([correo]);
+  });
+
+  test("no duplica un correo que coincide también en sus contactos", () => {
+    const ana = new Contacto("Ana", "ana@ucp.edu.ar");
+    const otraAna = new Contacto(
+      "Ana Gómez",
+      "ana.gomez@ucp.edu.ar"
+    );
+
+    const correo = new Correo(
+      "Consulta de Ana",
+      "Ana necesita información",
+      ana,
+      [otraAna]
+    );
+
+    const resultado = buscarCorreos([correo], "ana");
+
+    expect(resultado).toEqual([correo]);
+  });
 });

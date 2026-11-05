@@ -10,6 +10,10 @@ export function buscarCorreos(
     correo.asunto.toLowerCase().includes(busqueda) ||
     correo.contenido.toLowerCase().includes(busqueda) ||
     correo.remitente?.nombre.toLowerCase().includes(busqueda) ||
-    correo.remitente?.email.toLowerCase().includes(busqueda)
+    correo.remitente?.email.toLowerCase().includes(busqueda) ||
+    correo.destinatarios.some(destinatario =>
+      destinatario.nombre.toLowerCase().includes(busqueda) ||
+      destinatario.email.toLowerCase().includes(busqueda)
+    )
   );
 }
