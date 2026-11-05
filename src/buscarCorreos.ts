@@ -7,6 +7,7 @@ export function buscarCorreos(
   const busqueda = texto.toLowerCase();
 
   return correos.filter(correo =>
-    correo.asunto.toLowerCase().includes(busqueda)
+    correo.asunto.toLowerCase().includes(busqueda) ||
+    correo.contenido.toLowerCase().includes(busqueda)
   );
 }
