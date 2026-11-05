@@ -65,4 +65,49 @@ describe("Búsqueda de correos", () => {
 
     expect(resultado).toEqual([correo]);
   });
+
+  test("busca por una parte del nombre del remitente", () => {
+    const ana = new Contacto("Ana Gómez", "agomez@ucp.edu.ar");
+    const luis = new Contacto("Luis", "luis@ucp.edu.ar");
+
+    const correo = new Correo(
+      "Aviso",
+      "Hay clase",
+      ana,
+      [luis]
+    );
+
+    const resultado = buscarCorreos([correo], "gÓME");
+
+    expect(resultado).toEqual([correo]);
+  });
+
+  test("busca por una parte del email del remitente", () => {
+    const ana = new Contacto("Ana Gómez", "agomez@ucp.edu.ar");
+    const luis = new Contacto("Luis", "luis@ucp.edu.ar");
+
+    const correo = new Correo(
+      "Aviso",
+      "Hay clase",
+      ana,
+      [luis]
+    );
+
+    const resultado = buscarCorreos([correo], "AGOMEZ@");
+
+    expect(resultado).toEqual([correo]);
+  });
+
+  test("permite buscar aunque un correo no tenga remitente", () => {
+    const correo = new Correo(
+      "Pendiente",
+      "Falta completar",
+      null,
+      []
+    );
+
+    const resultado = buscarCorreos([correo], "docente");
+
+    expect(resultado).toEqual([]);
+  });
 });
