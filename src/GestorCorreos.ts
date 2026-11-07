@@ -6,6 +6,7 @@ type Bandeja = "entrada" | "borradores" | "enviados" | "eliminados";
 interface RegistroCorreo {
   correo: Correo;
   bandeja: Bandeja;
+  origen?: Bandeja;
 }
 
 export class GestorCorreos {
@@ -58,9 +59,25 @@ export class GestorCorreos {
   }
 
   eliminar(correo: Correo): void {
+    const origen = this._registros.get(correo.id)?.bandeja;
+
     this._registros.set(correo.id, {
       correo,
-      bandeja: "eliminados"
+      bandeja: "eliminados",
+      origen
+    });
+  }
+
+  restaurar(correo: Correo): void {
+    const origen = this._registros.get(correo.id)?.origen;
+
+    if (origen === undefined) {
+      throw new Error("El correo no está en Eliminados");
+    }
+
+    this._registros.set(correo.id, {
+      correo,
+      bandeja: origen
     });
   }
 
