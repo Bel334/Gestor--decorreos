@@ -1,7 +1,7 @@
 import { Correo } from "./Correo";
 import { buscarCorreos } from "./buscarCorreos";
 
-type Bandeja = "entrada" | "borradores" | "enviados";
+type Bandeja = "entrada" | "borradores" | "enviados" | "eliminados";
 
 interface RegistroCorreo {
   correo: Correo;
@@ -57,6 +57,13 @@ export class GestorCorreos {
     });
   }
 
+  eliminar(correo: Correo): void {
+    this._registros.set(correo.id, {
+      correo,
+      bandeja: "eliminados"
+    });
+  }
+
   get entrada(): Correo[] {
     return this.obtenerCorreos("entrada");
   }
@@ -67,6 +74,10 @@ export class GestorCorreos {
 
   get borradores(): Correo[] {
     return this.obtenerCorreos("borradores");
+  }
+
+  get eliminados(): Correo[] {
+    return this.obtenerCorreos("eliminados");
   }
 
   buscarEnEntrada(texto: string): Correo[] {
