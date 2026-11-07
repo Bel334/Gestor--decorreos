@@ -60,6 +60,14 @@ export class GestorCorreos {
 
   eliminar(correo: Correo): void {
     const origen = this._registros.get(correo.id)?.bandeja;
+    
+    if (origen === undefined) {
+      throw new Error("El correo no pertenece a ninguna bandeja");
+    }
+
+    if (origen === "eliminados") {
+      throw new Error("El correo ya está eliminado");
+    }
 
     this._registros.set(correo.id, {
       correo,

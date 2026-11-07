@@ -34,4 +34,20 @@ describe("Bandejas", () => {
         expect(gestor.entrada).toEqual([recibido]);
         expect(gestor.enviados).toEqual([enviado]);
     });
+
+    test("rechaza movimientos inválidos", () => {
+        const gestor = new GestorCorreos();
+        const correo = new Correo("Aviso", "Hay clase", ana, [luis]);
+
+        expect(() => gestor.eliminar(correo)).toThrow(/ninguna bandeja/i);
+        expect(() => gestor.restaurar(correo)).toThrow(/eliminados/i);
+
+        gestor.recibir(correo);
+        gestor.eliminar(correo);
+
+        expect(() => gestor.eliminar(correo)).toThrow(/ya está eliminado/i);
+
+        gestor.restaurar(correo);
+        expect(gestor.entrada).toEqual([correo]);
+    });
 });
