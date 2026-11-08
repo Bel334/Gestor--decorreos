@@ -23,4 +23,20 @@ describe("Favoritos", () => {
     expect(gestor.entrada).toEqual([recibido, comun]);
     expect(gestor.enviados).toEqual([enviado]);
   });
+
+ test("oculta los favoritos eliminados hasta restaurarlos", () => {
+    const gestor = new GestorCorreos();
+    const correo = new Correo("Aviso", "Hay clase", ana, [luis]);
+    gestor.recibir(correo);
+    correo.marcarFavorito();
+
+    gestor.eliminar(correo);
+
+    expect(gestor.favoritos).toEqual([]);
+    expect(correo.favorito).toBe(true);
+
+    gestor.restaurar(correo);
+
+    expect(gestor.favoritos).toEqual([correo]);
+  });
 });

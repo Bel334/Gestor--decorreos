@@ -112,9 +112,11 @@ export class GestorCorreos {
 
   get favoritos(): Correo[] {
     return [...this._registros.values()]
+      .filter(registro => registro.bandeja !== "eliminados")
       .map(registro => registro.correo)
       .filter(correo => correo.favorito);
   }
+
 
   buscarEnEntrada(texto: string): Correo[] {
     return buscarCorreos(this.entrada, texto);
