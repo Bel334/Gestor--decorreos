@@ -50,4 +50,14 @@ describe("Bandejas", () => {
         gestor.restaurar(correo);
         expect(gestor.entrada).toEqual([correo]);
     });
+
+    test("no permite enviar un correo eliminado sin restaurarlo", () => {
+        const gestor = new GestorCorreos();
+        const correo = new Correo("Aviso", "Hay clase", ana, [luis]);
+        gestor.guardarBorrador(correo);
+        gestor.eliminar(correo);
+
+        expect(() => gestor.enviar(correo)).toThrow(/restaurar/i);
+        expect(gestor.eliminados).toEqual([correo]);
+    });
 });

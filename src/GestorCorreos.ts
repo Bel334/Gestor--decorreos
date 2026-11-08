@@ -36,6 +36,11 @@ export class GestorCorreos {
 
     correo.validarParaEnvio();
 
+      registro?.bandeja !== "eliminados" ||
+      this.rechazarMovimiento(
+        "Un correo eliminado debe restaurarse antes de enviarse"
+      );
+
     this._registros.set(correo.id, {
       correo,
       bandeja: "enviados"
