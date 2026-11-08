@@ -85,4 +85,16 @@ describe("Correo", () => {
 
     expect(correo.destinatarios).toEqual([destinatario]);
   });
+
+  test("se puede marcar y desmarcar como favorito", () => {
+    const remitente = new Contacto("Ana", "ana@ucp.edu.ar");
+    const destinatario = new Contacto("Luis", "luis@ucp.edu.ar");
+    const correo = new Correo("Aviso", "Hay clase", remitente, [destinatario]);
+
+    correo.marcarFavorito();
+    expect(correo.favorito).toBe(true);
+
+    correo.desmarcarFavorito();
+    expect(correo.favorito).toBe(false);
+  });
 });

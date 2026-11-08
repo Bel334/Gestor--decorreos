@@ -42,4 +42,13 @@ export class Correo {
   private rechazarEnvio(mensaje: string): never {
     throw new Error(mensaje);
   }
+
+    marcarFavorito(): void {
+    this._favorito = true;
+  }
+
+  desmarcarFavorito(): void {
+    this._favorito = false;
+  }
+  
 }
