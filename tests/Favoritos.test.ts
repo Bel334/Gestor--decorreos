@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Contacto } from "../src/Contacto";
 import { Correo } from "../src/Correo";
 import { GestorCorreos } from "../src/GestorCorreos";
+import { FiltroCorreo } from "../src/FiltroCorreo";
 
 describe("Favoritos", () => {
   const ana = new Contacto("Ana", "ana@ucp.edu.ar");
@@ -38,5 +39,22 @@ describe("Favoritos", () => {
     gestor.restaurar(correo);
 
     expect(gestor.favoritos).toEqual([correo]);
+  });
+
+  test("permite aplicar un filtro sobre los favoritos", () => {
+    const gestor = new GestorCorreos();
+    const pedro = new Contacto("Pedro", "pedro@gmail.com");
+    const deUcp = new Correo("Examen", "El lunes", ana, [luis]);
+    const deGmail = new Correo("Hola", "Saludos", pedro, [luis]);
+    gestor.recibir(deUcp);
+    gestor.recibir(deGmail);
+    deUcp.marcarFavorito();
+    deGmail.marcarFavorito();
+
+    const filtro = new FiltroCorreo("Correos de la UCP", correo =>
+      correo.remitente?.email.endsWith("@ucp.edu.ar") ?? false
+    );
+
+    expect(filtro.aplicar(gestor.favoritos)).toEqual([deUcp]);
   });
 });
