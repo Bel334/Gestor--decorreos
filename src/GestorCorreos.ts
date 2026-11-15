@@ -1,4 +1,6 @@
 import { Correo } from "./Correo";
+import { Borrador } from "./Borrador";
+import type { CambiosBorrador } from "./Borrador";
 import { buscarCorreos } from "./buscarCorreos";
 
 type Bandeja = "entrada" | "borradores" | "enviados" | "eliminados";
@@ -21,9 +23,28 @@ export class GestorCorreos {
       );
 
     this._registros.set(correo.id, {
-      correo,
+      correo: registro?.correo ?? correo,
       bandeja: "borradores"
     });
+  }
+
+  editarBorrador(
+    id: string,
+    cambios: CambiosBorrador
+  ): Borrador {
+    const registro = this._registros.get(id) ??
+      this.rechazarMovimiento("El correo no existe");
+
+    registro.bandeja === "borradores" ||
+      this.rechazarMovimiento(
+        "Solo se pueden editar borradores"
+      );
+
+    const editado = Borrador.desdeCorreo(registro.correo, cambios);
+
+    registro.correo = editado;
+
+    return editado;
   }
 
   enviar(correo: Correo): void {
@@ -34,15 +55,17 @@ export class GestorCorreos {
         "Un correo recibido no puede enviarse como propio"
       );
 
-    correo.validarParaEnvio();
-
-      registro?.bandeja !== "eliminados" ||
+    registro?.bandeja !== "eliminados" ||
       this.rechazarMovimiento(
         "Un correo eliminado debe restaurarse antes de enviarse"
       );
 
-    this._registros.set(correo.id, {
-      correo,
+    const actual = registro?.correo ?? correo;
+
+    actual.validarParaEnvio();
+
+    this._registros.set(actual.id, {
+      correo: actual,
       bandeja: "enviados"
     });
   }
@@ -55,41 +78,50 @@ export class GestorCorreos {
         "El correo ya pertenece a otra bandeja"
       );
 
-    correo.validarParaEnvio();
+    const actual = registro?.correo ?? correo;
 
-    this._registros.set(correo.id, {
-      correo,
+    actual.validarParaEnvio();
+
+    this._registros.set(actual.id, {
+      correo: actual,
       bandeja: "entrada"
     });
   }
 
   eliminar(correo: Correo): void {
-    const origen = this._registros.get(correo.id)?.bandeja;
-    
-    if (origen === undefined) {
-      throw new Error("El correo no pertenece a ninguna bandeja");
-    }
+    const registro = this._registros.get(correo.id) ??
+      this.rechazarMovimiento(
+        "El correo no pertenece a ninguna bandeja"
+      );
 
-    if (origen === "eliminados") {
-      throw new Error("El correo ya está eliminado");
-    }
+    registro.bandeja !== "eliminados" ||
+      this.rechazarMovimiento("El correo ya está eliminado");
 
     this._registros.set(correo.id, {
-      correo,
+      correo: registro.correo,
       bandeja: "eliminados",
-      origen
+      origen: registro.bandeja
     });
   }
 
   restaurar(correo: Correo): void {
-    const origen = this._registros.get(correo.id)?.origen;
+    const registro = this._registros.get(correo.id) ??
+      this.rechazarMovimiento(
+        "El correo no está en Eliminados"
+      );
 
-    if (origen === undefined) {
-      throw new Error("El correo no está en Eliminados");
-    }
+    registro.bandeja === "eliminados" ||
+      this.rechazarMovimiento(
+        "El correo no está en Eliminados"
+      );
+
+    const origen = registro.origen ??
+      this.rechazarMovimiento(
+        "El correo no tiene una bandeja de origen"
+      );
 
     this._registros.set(correo.id, {
-      correo,
+      correo: registro.correo,
       bandeja: origen
     });
   }
@@ -116,7 +148,6 @@ export class GestorCorreos {
       .map(registro => registro.correo)
       .filter(correo => correo.favorito);
   }
-
 
   buscarEnEntrada(texto: string): Correo[] {
     return buscarCorreos(this.entrada, texto);

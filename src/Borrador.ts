@@ -18,12 +18,15 @@ export class Borrador extends Correo {
     super(asunto, contenido, remitente, destinatarios);
   }
 
-  editar(cambios: CambiosBorrador): Borrador {
+  static desdeCorreo(
+    correo: Correo,
+    cambios: CambiosBorrador = {}
+  ): Borrador {
     const {
-      asunto = this.asunto,
-      contenido = this.contenido,
-      remitente = this.remitente,
-      destinatarios = this.destinatarios
+      asunto = correo.asunto,
+      contenido = correo.contenido,
+      remitente = correo.remitente,
+      destinatarios = correo.destinatarios
     } = cambios;
 
     const editado = new Borrador(
@@ -33,8 +36,12 @@ export class Borrador extends Correo {
       destinatarios
     );
 
-    editado.copiarEstadoDe(this);
+    editado.copiarEstadoDe(correo);
 
     return editado;
+  }
+
+  editar(cambios: CambiosBorrador): Borrador {
+    return Borrador.desdeCorreo(this, cambios);
   }
 }
