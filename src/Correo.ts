@@ -1,8 +1,7 @@
 import { Contacto } from "./Contacto";
 
 export class Correo {
-  readonly id: string = crypto.randomUUID();
-
+  private _id: string = crypto.randomUUID();
   private _leido: boolean = false;
   private _favorito: boolean = false;
   private _destinatarios: Contacto[];
@@ -14,6 +13,10 @@ export class Correo {
     destinatarios: Contacto[]
   ) {
     this._destinatarios = [...destinatarios];
+  }
+
+  get id(): string {
+    return this._id;
   }
 
   get leido(): boolean {
@@ -39,16 +42,21 @@ export class Correo {
       this.rechazarEnvio("Se requiere al menos un destinatario");
   }
 
-  private rechazarEnvio(mensaje: string): never {
-    throw new Error(mensaje);
-  }
-
-    marcarFavorito(): void {
+  marcarFavorito(): void {
     this._favorito = true;
   }
 
   desmarcarFavorito(): void {
     this._favorito = false;
   }
-  
+
+  protected copiarEstadoDe(correo: Correo): void {
+    this._id = correo.id;
+    this._leido = correo.leido;
+    this._favorito = correo.favorito;
+  }
+
+  private rechazarEnvio(mensaje: string): never {
+    throw new Error(mensaje);
+  }
 }
