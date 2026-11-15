@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Contacto } from "../src/Contacto";
 import { Correo } from "../src/Correo";
 import { GestorCorreos } from "../src/GestorCorreos";
-import { obtenerAsuntos } from "../src/Estadisticas";
+import { obtenerAsuntos, obtenerQueCumplen } from "../src/Estadisticas";
 
 describe("Estadísticas", () => {
   const ana = new Contacto("Ana", "ana@ucp.edu.ar");
@@ -15,5 +15,17 @@ describe("Estadísticas", () => {
 
     expect(obtenerAsuntos(gestor.entrada)).toEqual(["Examen", "Reunión"]);
     expect(obtenerAsuntos([])).toEqual([]);
+  });
+
+  test("obtiene los correos que cumplen una condición", () => {
+    const examen = new Correo("Examen", "El lunes", ana, [luis]);
+    const reunion = new Correo("Reunión", "El martes", ana, [luis]);
+    const correos = [examen, reunion];
+    examen.marcarFavorito();
+
+    const resultado = obtenerQueCumplen(correos, correo => correo.favorito);
+
+    expect(resultado).toEqual([examen]);
+    expect(correos).toEqual([examen, reunion]);
   });
 });
