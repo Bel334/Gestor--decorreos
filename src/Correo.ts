@@ -50,6 +50,13 @@ export class Correo {
     this._favorito = false;
   }
 
+  marcarLeido(): void {
+    this._leido = true;
+  }
+
+  marcarNoLeido(): void {
+    this._leido = false;
+  }
   protected copiarEstadoDe(correo: Correo): void {
     this._id = correo.id;
     this._leido = correo.leido;

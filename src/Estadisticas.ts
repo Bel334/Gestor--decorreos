@@ -21,3 +21,7 @@ export function contarPorRemitente(
     return { ...conteo, [clave]: (conteo[clave] ?? 0) + 1 };
   }, {});
 }
+
+export function obtenerNoLeidos(correos: readonly Correo[]): Correo[] {
+  return obtenerQueCumplen(correos, correo => !correo.leido);
+}

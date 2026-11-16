@@ -97,4 +97,16 @@ describe("Correo", () => {
     correo.desmarcarFavorito();
     expect(correo.favorito).toBe(false);
   });
+
+  test("se puede marcar como leído y como no leído", () => {
+    const remitente = new Contacto("Ana", "ana@ucp.edu.ar");
+    const destinatario = new Contacto("Luis", "luis@ucp.edu.ar");
+    const correo = new Correo("Aviso", "Hay clase", remitente, [destinatario]);
+
+    correo.marcarLeido();
+    expect(correo.leido).toBe(true);
+
+    correo.marcarNoLeido();
+    expect(correo.leido).toBe(false);
+  });
 });
