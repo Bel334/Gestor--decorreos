@@ -1,4 +1,5 @@
 import { Contacto } from "./Contacto";
+import { Correo } from "./Correo";
 import { GestorCorreos } from "./GestorCorreos";
 
 export class ServidorCorreos {
@@ -24,6 +25,29 @@ export class ServidorCorreos {
     }
 
     return buzon;
+  }
+
+  enviar(correo: Correo): void {
+    correo.validarParaEnvio();
+
+    const buzonRemitente = this.buzonDe(correo.remitente?.email ?? "");
+    const buzonesDestino = correo.destinatarios
+      .map(destinatario => this.buzonDe(destinatario.email));
+
+    buzonRemitente.enviar(correo);
+
+    for (const buzon of buzonesDestino) {
+      buzon.recibir(this.copiar(correo));
+    }
+  }
+
+  private copiar(correo: Correo): Correo {
+    return new Correo(
+      correo.asunto,
+      correo.contenido,
+      correo.remitente,
+      correo.destinatarios
+    );
   }
 
   private clave(email: string): string {
